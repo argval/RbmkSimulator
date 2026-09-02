@@ -1180,10 +1180,6 @@ public class ReactorCore extends Subsystem implements Runnable {
             evapId = ChannelData.getEvaporatorChannel(f.getX(), f.getY());
             evapX = evapId / 100;
             evapY = evapId % 100;
-            System.out.println("EvapX " + evapX + " EvapY " + evapY);
-            if (evapId == 0) {
-                evapId = 0;
-            }
             idx = evaporatorIndex[evapX - ChannelData.MIN_NUMBER][evapY - ChannelData.MIN_NUMBER];
             evp = evaporatorElements.get(idx);
 
