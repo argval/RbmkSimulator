@@ -206,7 +206,6 @@ public class PanelTurbine extends AbstractPanelWidget
 
         jLabelTempSetpoint1.setFont(jLabelTempSetpoint1.getFont().deriveFont(jLabelTempSetpoint1.getFont().getStyle() & ~java.awt.Font.BOLD, jLabelTempSetpoint1.getFont().getSize()-2));
         jLabelTempSetpoint1.setText("Level Setpoint");
-        jLabelTempSetpoint1.setToolTipText("Scrams the reactor by immediately inserting all rods");
         jLabelTempSetpoint1.setMaximumSize(new java.awt.Dimension(52, 14));
         jLabelTempSetpoint1.setMinimumSize(new java.awt.Dimension(52, 14));
         jLabelTempSetpoint1.setPreferredSize(new java.awt.Dimension(52, 14));
@@ -228,7 +227,6 @@ public class PanelTurbine extends AbstractPanelWidget
         jLabelCaption1.setFont(jLabelCaption1.getFont().deriveFont(jLabelCaption1.getFont().getStyle() & ~java.awt.Font.BOLD, jLabelCaption1.getFont().getSize()-2));
         jLabelCaption1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabelCaption1.setText("Reheater");
-        jLabelCaption1.setToolTipText("Scrams the reactor by immediately inserting all rods");
         jLabelCaption1.setMaximumSize(new java.awt.Dimension(52, 14));
         jLabelCaption1.setMinimumSize(new java.awt.Dimension(52, 14));
         jLabelCaption1.setPreferredSize(new java.awt.Dimension(52, 14));
@@ -237,7 +235,6 @@ public class PanelTurbine extends AbstractPanelWidget
         jLabelCaptionSuperheaterControl1.setFont(jLabelCaptionSuperheaterControl1.getFont().deriveFont(jLabelCaptionSuperheaterControl1.getFont().getStyle() | java.awt.Font.BOLD, jLabelCaptionSuperheaterControl1.getFont().getSize()-2));
         jLabelCaptionSuperheaterControl1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabelCaptionSuperheaterControl1.setText("High Pressure Steam Valve Controls");
-        jLabelCaptionSuperheaterControl1.setToolTipText("Scrams the reactor by immediately inserting all rods");
         jLabelCaptionSuperheaterControl1.setMaximumSize(new java.awt.Dimension(52, 14));
         jLabelCaptionSuperheaterControl1.setMinimumSize(new java.awt.Dimension(52, 14));
         jLabelCaptionSuperheaterControl1.setPreferredSize(new java.awt.Dimension(52, 14));
@@ -271,7 +268,7 @@ public class PanelTurbine extends AbstractPanelWidget
         jLabelCaption2.setFont(jLabelCaption2.getFont().deriveFont(jLabelCaption2.getFont().getStyle() & ~java.awt.Font.BOLD, jLabelCaption2.getFont().getSize()-2));
         jLabelCaption2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabelCaption2.setText("Reset");
-        jLabelCaption2.setToolTipText("Scrams the reactor by immediately inserting all rods");
+        jLabelCaption2.setToolTipText("Clear turbine protection lock if all prerequisites are met.");
         jLabelCaption2.setMaximumSize(new java.awt.Dimension(52, 14));
         jLabelCaption2.setMinimumSize(new java.awt.Dimension(52, 14));
         jLabelCaption2.setPreferredSize(new java.awt.Dimension(52, 14));
@@ -280,7 +277,7 @@ public class PanelTurbine extends AbstractPanelWidget
         jLabelCaption3.setFont(jLabelCaption3.getFont().deriveFont(jLabelCaption3.getFont().getStyle() & ~java.awt.Font.BOLD, jLabelCaption3.getFont().getSize()-2));
         jLabelCaption3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabelCaption3.setText("Trip");
-        jLabelCaption3.setToolTipText("Scrams the reactor by immediately inserting all rods");
+        jLabelCaption3.setToolTipText("Trips the turbines fast closing valves and immediatelly shuts off the turbine.");
         jLabelCaption3.setMaximumSize(new java.awt.Dimension(52, 14));
         jLabelCaption3.setMinimumSize(new java.awt.Dimension(52, 14));
         jLabelCaption3.setPreferredSize(new java.awt.Dimension(52, 14));
@@ -442,7 +439,6 @@ public class PanelTurbine extends AbstractPanelWidget
         jLabelCaption5.setFont(jLabelCaption5.getFont().deriveFont(jLabelCaption5.getFont().getStyle() & ~java.awt.Font.BOLD, jLabelCaption5.getFont().getSize()-2));
         jLabelCaption5.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabelCaption5.setText("Startup Valves");
-        jLabelCaption5.setToolTipText("Scrams the reactor by immediately inserting all rods");
         jLabelCaption5.setMaximumSize(new java.awt.Dimension(52, 14));
         jLabelCaption5.setMinimumSize(new java.awt.Dimension(52, 14));
         jLabelCaption5.setPreferredSize(new java.awt.Dimension(52, 14));
@@ -451,7 +447,7 @@ public class PanelTurbine extends AbstractPanelWidget
         jLabelCaptionSuperheaterControl4.setFont(jLabelCaptionSuperheaterControl4.getFont().deriveFont(jLabelCaptionSuperheaterControl4.getFont().getStyle() | java.awt.Font.BOLD, jLabelCaptionSuperheaterControl4.getFont().getSize()-2));
         jLabelCaptionSuperheaterControl4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabelCaptionSuperheaterControl4.setText("Trip Valves");
-        jLabelCaptionSuperheaterControl4.setToolTipText("Scrams the reactor by immediately inserting all rods");
+        jLabelCaptionSuperheaterControl4.setToolTipText("");
         jLabelCaptionSuperheaterControl4.setMaximumSize(new java.awt.Dimension(52, 14));
         jLabelCaptionSuperheaterControl4.setMinimumSize(new java.awt.Dimension(52, 14));
         jLabelCaptionSuperheaterControl4.setPreferredSize(new java.awt.Dimension(52, 14));
@@ -515,14 +511,10 @@ public class PanelTurbine extends AbstractPanelWidget
         jLabelCaption8.setFont(jLabelCaption8.getFont().deriveFont(jLabelCaption8.getFont().getStyle() & ~java.awt.Font.BOLD, jLabelCaption8.getFont().getSize()-2));
         jLabelCaption8.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabelCaption8.setText("Main Valves");
-        jLabelCaption8.setToolTipText("Scrams the reactor by immediately inserting all rods");
-        jLabelCaption8.setMaximumSize(new java.awt.Dimension(52, 14));
-        jLabelCaption8.setMinimumSize(new java.awt.Dimension(52, 14));
-        jLabelCaption8.setPreferredSize(new java.awt.Dimension(52, 14));
         add(jLabelCaption8, new org.netbeans.lib.awtextra.AbsoluteConstraints(384, 112, 90, 14));
 
         jToggleButtonTPSActive.setText("←");
-        jToggleButtonTPSActive.setToolTipText("Overrides the turbine protection (unsafe, do NOT turn this off)");
+        jToggleButtonTPSActive.setToolTipText("Overrides the turbine protection (unsafe, do NOT turn this off). Hint: The Turning Gear needs to be off to clear the Turbine protection.");
         jToggleButtonTPSActive.setMargin(new java.awt.Insets(0, 0, 0, 0));
         jToggleButtonTPSActive.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -534,7 +526,7 @@ public class PanelTurbine extends AbstractPanelWidget
         jLabelCaption9.setFont(jLabelCaption9.getFont().deriveFont(jLabelCaption9.getFont().getStyle() & ~java.awt.Font.BOLD, jLabelCaption9.getFont().getSize()-2));
         jLabelCaption9.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabelCaption9.setText("Active");
-        jLabelCaption9.setToolTipText("Scrams the reactor by immediately inserting all rods");
+        jLabelCaption9.setToolTipText("Overrides the turbine protection (unsafe, do NOT turn this off). Hint: The Turning Gear needs to be off to clear the Turbine protection.");
         jLabelCaption9.setMaximumSize(new java.awt.Dimension(52, 14));
         jLabelCaption9.setMinimumSize(new java.awt.Dimension(52, 14));
         jLabelCaption9.setPreferredSize(new java.awt.Dimension(52, 14));
@@ -543,7 +535,6 @@ public class PanelTurbine extends AbstractPanelWidget
         jLabelCaptionSuperheaterControl7.setFont(jLabelCaptionSuperheaterControl7.getFont().deriveFont(jLabelCaptionSuperheaterControl7.getFont().getStyle() | java.awt.Font.BOLD, jLabelCaptionSuperheaterControl7.getFont().getSize()-2));
         jLabelCaptionSuperheaterControl7.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabelCaptionSuperheaterControl7.setText("Protection");
-        jLabelCaptionSuperheaterControl7.setToolTipText("Scrams the reactor by immediately inserting all rods");
         jLabelCaptionSuperheaterControl7.setMaximumSize(new java.awt.Dimension(52, 14));
         jLabelCaptionSuperheaterControl7.setMinimumSize(new java.awt.Dimension(52, 14));
         jLabelCaptionSuperheaterControl7.setPreferredSize(new java.awt.Dimension(52, 14));
@@ -552,7 +543,6 @@ public class PanelTurbine extends AbstractPanelWidget
         jLabelCaptionSuperheaterControl5.setFont(jLabelCaptionSuperheaterControl5.getFont().deriveFont(jLabelCaptionSuperheaterControl5.getFont().getStyle() | java.awt.Font.BOLD, jLabelCaptionSuperheaterControl5.getFont().getSize()-2));
         jLabelCaptionSuperheaterControl5.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabelCaptionSuperheaterControl5.setText("Reheater Condensate Control");
-        jLabelCaptionSuperheaterControl5.setToolTipText("Scrams the reactor by immediately inserting all rods");
         jLabelCaptionSuperheaterControl5.setMaximumSize(new java.awt.Dimension(52, 14));
         jLabelCaptionSuperheaterControl5.setMinimumSize(new java.awt.Dimension(52, 14));
         jLabelCaptionSuperheaterControl5.setPreferredSize(new java.awt.Dimension(52, 14));
@@ -563,7 +553,7 @@ public class PanelTurbine extends AbstractPanelWidget
 
         jButtonTrip1Close.setBackground(new java.awt.Color(0, 128, 0));
         jButtonTrip1Close.setText("C");
-        jButtonTrip1Close.setToolTipText("");
+        jButtonTrip1Close.setToolTipText("Fast trip valves. Control hydraulics must be available to operate those.");
         jButtonTrip1Close.setMargin(new java.awt.Insets(0, 0, 0, 0));
         jButtonTrip1Close.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -574,7 +564,7 @@ public class PanelTurbine extends AbstractPanelWidget
 
         jButtonTrip1Open.setBackground(new java.awt.Color(128, 0, 0));
         jButtonTrip1Open.setText("O");
-        jButtonTrip1Open.setToolTipText("");
+        jButtonTrip1Open.setToolTipText("Fast trip valves. Control hydraulics must be available to operate those.");
         jButtonTrip1Open.setMargin(new java.awt.Insets(0, 0, 0, 0));
         jButtonTrip1Open.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -586,6 +576,7 @@ public class PanelTurbine extends AbstractPanelWidget
         jLabelCaptionLPShut1.setFont(jLabelCaptionLPShut1.getFont().deriveFont(jLabelCaptionLPShut1.getFont().getSize()-2f));
         jLabelCaptionLPShut1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabelCaptionLPShut1.setText("LP");
+        jLabelCaptionLPShut1.setToolTipText("Fast trip valves. Control hydraulics must be available to operate those.");
         jLabelCaptionLPShut1.setMaximumSize(new java.awt.Dimension(52, 14));
         jLabelCaptionLPShut1.setMinimumSize(new java.awt.Dimension(52, 14));
         jLabelCaptionLPShut1.setPreferredSize(new java.awt.Dimension(52, 14));
@@ -593,7 +584,7 @@ public class PanelTurbine extends AbstractPanelWidget
 
         jButtonLPShutClose.setBackground(new java.awt.Color(0, 128, 0));
         jButtonLPShutClose.setText("C");
-        jButtonLPShutClose.setToolTipText("");
+        jButtonLPShutClose.setToolTipText("Fast trip valves. Control hydraulics must be available to operate those.");
         jButtonLPShutClose.setMargin(new java.awt.Insets(0, 0, 0, 0));
         jButtonLPShutClose.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -604,7 +595,7 @@ public class PanelTurbine extends AbstractPanelWidget
 
         jButtenLPShutOpen.setBackground(new java.awt.Color(128, 0, 0));
         jButtenLPShutOpen.setText("O");
-        jButtenLPShutOpen.setToolTipText("");
+        jButtenLPShutOpen.setToolTipText("Fast trip valves. Control hydraulics must be available to operate those.");
         jButtenLPShutOpen.setMargin(new java.awt.Insets(0, 0, 0, 0));
         jButtenLPShutOpen.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -615,7 +606,7 @@ public class PanelTurbine extends AbstractPanelWidget
 
         jButtonTrip2Close.setBackground(new java.awt.Color(0, 128, 0));
         jButtonTrip2Close.setText("C");
-        jButtonTrip2Close.setToolTipText("");
+        jButtonTrip2Close.setToolTipText("Fast trip valves. Control hydraulics must be available to operate those.");
         jButtonTrip2Close.setMargin(new java.awt.Insets(0, 0, 0, 0));
         jButtonTrip2Close.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -626,7 +617,7 @@ public class PanelTurbine extends AbstractPanelWidget
 
         jButtonTrip2Open.setBackground(new java.awt.Color(128, 0, 0));
         jButtonTrip2Open.setText("O");
-        jButtonTrip2Open.setToolTipText("");
+        jButtonTrip2Open.setToolTipText("Fast trip valves. Control hydraulics must be available to operate those.");
         jButtonTrip2Open.setMargin(new java.awt.Insets(0, 0, 0, 0));
         jButtonTrip2Open.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -638,6 +629,7 @@ public class PanelTurbine extends AbstractPanelWidget
         jLabelCaptionLPShut7.setFont(jLabelCaptionLPShut7.getFont().deriveFont(jLabelCaptionLPShut7.getFont().getSize()-2f));
         jLabelCaptionLPShut7.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabelCaptionLPShut7.setText("Steam 1");
+        jLabelCaptionLPShut7.setToolTipText("Fast trip valves. Control hydraulics must be available to operate those.");
         jLabelCaptionLPShut7.setMaximumSize(new java.awt.Dimension(52, 14));
         jLabelCaptionLPShut7.setMinimumSize(new java.awt.Dimension(52, 14));
         jLabelCaptionLPShut7.setPreferredSize(new java.awt.Dimension(52, 14));
@@ -646,6 +638,7 @@ public class PanelTurbine extends AbstractPanelWidget
         jLabelCaptionLPShut10.setFont(jLabelCaptionLPShut10.getFont().deriveFont(jLabelCaptionLPShut10.getFont().getSize()-2f));
         jLabelCaptionLPShut10.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabelCaptionLPShut10.setText("Steam 2");
+        jLabelCaptionLPShut10.setToolTipText("Fast trip valves. Control hydraulics must be available to operate those.");
         jLabelCaptionLPShut10.setMaximumSize(new java.awt.Dimension(52, 14));
         jLabelCaptionLPShut10.setMinimumSize(new java.awt.Dimension(52, 14));
         jLabelCaptionLPShut10.setPreferredSize(new java.awt.Dimension(52, 14));
@@ -653,7 +646,7 @@ public class PanelTurbine extends AbstractPanelWidget
 
         jButtonSuperheaterShutoffClose.setBackground(new java.awt.Color(0, 128, 0));
         jButtonSuperheaterShutoffClose.setText("C");
-        jButtonSuperheaterShutoffClose.setToolTipText("");
+        jButtonSuperheaterShutoffClose.setToolTipText("Fast trip valves. Control hydraulics must be available to operate those.");
         jButtonSuperheaterShutoffClose.setMargin(new java.awt.Insets(0, 0, 0, 0));
         jButtonSuperheaterShutoffClose.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -664,7 +657,7 @@ public class PanelTurbine extends AbstractPanelWidget
 
         jButtonSuperheaterShutoffOpen.setBackground(new java.awt.Color(128, 0, 0));
         jButtonSuperheaterShutoffOpen.setText("O");
-        jButtonSuperheaterShutoffOpen.setToolTipText("");
+        jButtonSuperheaterShutoffOpen.setToolTipText("Fast trip valves. Control hydraulics must be available to operate those.");
         jButtonSuperheaterShutoffOpen.setMargin(new java.awt.Insets(0, 0, 0, 0));
         jButtonSuperheaterShutoffOpen.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -676,6 +669,7 @@ public class PanelTurbine extends AbstractPanelWidget
         jLabelCaptionLPShut5.setFont(jLabelCaptionLPShut5.getFont().deriveFont(jLabelCaptionLPShut5.getFont().getSize()-2f));
         jLabelCaptionLPShut5.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabelCaptionLPShut5.setText("Reheater");
+        jLabelCaptionLPShut5.setToolTipText("Fast trip valves. Control hydraulics must be available to operate those.");
         jLabelCaptionLPShut5.setMaximumSize(new java.awt.Dimension(52, 14));
         jLabelCaptionLPShut5.setMinimumSize(new java.awt.Dimension(52, 14));
         jLabelCaptionLPShut5.setPreferredSize(new java.awt.Dimension(52, 14));
@@ -686,7 +680,6 @@ public class PanelTurbine extends AbstractPanelWidget
         jLabelCaptionSuperheaterControl6.setFont(jLabelCaptionSuperheaterControl6.getFont().deriveFont(jLabelCaptionSuperheaterControl6.getFont().getStyle() | java.awt.Font.BOLD, jLabelCaptionSuperheaterControl6.getFont().getSize()-2));
         jLabelCaptionSuperheaterControl6.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabelCaptionSuperheaterControl6.setText("Turbine");
-        jLabelCaptionSuperheaterControl6.setToolTipText("Scrams the reactor by immediately inserting all rods");
         jLabelCaptionSuperheaterControl6.setMaximumSize(new java.awt.Dimension(52, 14));
         jLabelCaptionSuperheaterControl6.setMinimumSize(new java.awt.Dimension(52, 14));
         jLabelCaptionSuperheaterControl6.setPreferredSize(new java.awt.Dimension(52, 14));
@@ -762,9 +755,6 @@ public class PanelTurbine extends AbstractPanelWidget
         jLabelCaptionAuxLubeOil.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabelCaptionAuxLubeOil.setText("Aux lube oil");
         jLabelCaptionAuxLubeOil.setToolTipText("Turbine bearings");
-        jLabelCaptionAuxLubeOil.setMaximumSize(new java.awt.Dimension(52, 14));
-        jLabelCaptionAuxLubeOil.setMinimumSize(new java.awt.Dimension(52, 14));
-        jLabelCaptionAuxLubeOil.setPreferredSize(new java.awt.Dimension(52, 14));
         add(jLabelCaptionAuxLubeOil, new org.netbeans.lib.awtextra.AbsoluteConstraints(426, 276, 68, 14));
 
         jLabelCaptionTG1.setFont(jLabelCaptionTG1.getFont().deriveFont(jLabelCaptionTG1.getFont().getSize()-2f));
@@ -805,7 +795,6 @@ public class PanelTurbine extends AbstractPanelWidget
         jLabelTempSetpoint.setFont(jLabelTempSetpoint.getFont().deriveFont(jLabelTempSetpoint.getFont().getStyle() & ~java.awt.Font.BOLD, jLabelTempSetpoint.getFont().getSize()-2));
         jLabelTempSetpoint.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabelTempSetpoint.setText("Setpoint (°C)");
-        jLabelTempSetpoint.setToolTipText("Scrams the reactor by immediately inserting all rods");
         jLabelTempSetpoint.setMaximumSize(new java.awt.Dimension(52, 14));
         jLabelTempSetpoint.setMinimumSize(new java.awt.Dimension(52, 14));
         jLabelTempSetpoint.setPreferredSize(new java.awt.Dimension(52, 14));
@@ -833,7 +822,6 @@ public class PanelTurbine extends AbstractPanelWidget
         jLabelTempSetpoint2.setFont(jLabelTempSetpoint2.getFont().deriveFont(jLabelTempSetpoint2.getFont().getStyle() & ~java.awt.Font.BOLD, jLabelTempSetpoint2.getFont().getSize()-2));
         jLabelTempSetpoint2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabelTempSetpoint2.setText("Steam Reheater");
-        jLabelTempSetpoint2.setToolTipText("Scrams the reactor by immediately inserting all rods");
         jLabelTempSetpoint2.setMaximumSize(new java.awt.Dimension(52, 14));
         jLabelTempSetpoint2.setMinimumSize(new java.awt.Dimension(52, 14));
         jLabelTempSetpoint2.setPreferredSize(new java.awt.Dimension(52, 14));
