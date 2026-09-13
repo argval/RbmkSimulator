@@ -305,7 +305,7 @@ public class PanelGenerator extends AbstractPanelWidget
 
         jButtonSpeedValvesMinus.setFont(jButtonSpeedValvesMinus.getFont().deriveFont(jButtonSpeedValvesMinus.getFont().getSize()-2f));
         jButtonSpeedValvesMinus.setText("↑");
-        jButtonSpeedValvesMinus.setToolTipText("Overrides the commands on the startup steam valves");
+        jButtonSpeedValvesMinus.setToolTipText("Manually operates the turbine startup valves to manipulate speed when syncing to grid");
         jButtonSpeedValvesMinus.setMargin(new java.awt.Insets(0, 0, 0, 0));
         jButtonSpeedValvesMinus.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
@@ -324,7 +324,7 @@ public class PanelGenerator extends AbstractPanelWidget
 
         jButtonSpeedValvesPlus.setFont(jButtonSpeedValvesPlus.getFont().deriveFont(jButtonSpeedValvesPlus.getFont().getSize()-2f));
         jButtonSpeedValvesPlus.setText("↓");
-        jButtonSpeedValvesPlus.setToolTipText("Overrides the commands on the startup steam valves");
+        jButtonSpeedValvesPlus.setToolTipText("Manually operates the turbine startup valves to manipulate speed when syncing to grid");
         jButtonSpeedValvesPlus.setMargin(new java.awt.Insets(0, 0, 0, 0));
         jButtonSpeedValvesPlus.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
@@ -355,11 +355,13 @@ public class PanelGenerator extends AbstractPanelWidget
         jLabelCaptionStartupValvesOpenClose.setFont(jLabelCaptionStartupValvesOpenClose.getFont().deriveFont(jLabelCaptionStartupValvesOpenClose.getFont().getStyle() & ~java.awt.Font.BOLD, jLabelCaptionStartupValvesOpenClose.getFont().getSize()-2));
         jLabelCaptionStartupValvesOpenClose.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabelCaptionStartupValvesOpenClose.setText("Close/Open");
+        jLabelCaptionStartupValvesOpenClose.setToolTipText("Manually operates the turbine startup valves to manipulate speed when syncing to grid");
         add(jLabelCaptionStartupValvesOpenClose, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 168, 64, -1));
 
         jLabelCaptionStartupValves1.setFont(jLabelCaptionStartupValves1.getFont().deriveFont(jLabelCaptionStartupValves1.getFont().getStyle() & ~java.awt.Font.BOLD, jLabelCaptionStartupValves1.getFont().getSize()-2));
         jLabelCaptionStartupValves1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabelCaptionStartupValves1.setText("Startup");
+        jLabelCaptionStartupValves1.setToolTipText("Manually operates the turbine startup valves to manipulate speed when syncing to grid");
         jLabelCaptionStartupValves1.setMaximumSize(new java.awt.Dimension(52, 14));
         jLabelCaptionStartupValves1.setMinimumSize(new java.awt.Dimension(52, 14));
         jLabelCaptionStartupValves1.setPreferredSize(new java.awt.Dimension(52, 14));
@@ -368,6 +370,7 @@ public class PanelGenerator extends AbstractPanelWidget
         jLabelCaptionStartupValves2.setFont(jLabelCaptionStartupValves2.getFont().deriveFont(jLabelCaptionStartupValves2.getFont().getStyle() & ~java.awt.Font.BOLD, jLabelCaptionStartupValves2.getFont().getSize()-2));
         jLabelCaptionStartupValves2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabelCaptionStartupValves2.setText("Valves");
+        jLabelCaptionStartupValves2.setToolTipText("Manually operates the turbine startup valves to manipulate speed when syncing to grid");
         jLabelCaptionStartupValves2.setMaximumSize(new java.awt.Dimension(52, 14));
         jLabelCaptionStartupValves2.setMinimumSize(new java.awt.Dimension(52, 14));
         jLabelCaptionStartupValves2.setPreferredSize(new java.awt.Dimension(52, 14));
