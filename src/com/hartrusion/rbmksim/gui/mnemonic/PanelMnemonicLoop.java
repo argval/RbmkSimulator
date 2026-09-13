@@ -91,7 +91,6 @@ public class PanelMnemonicLoop extends javax.swing.JPanel implements UpdateRecei
         jLabelFeedwaterFlow = new javax.swing.JLabel();
         jLabelBlowdownFlow = new javax.swing.JLabel();
         jLabelReadingFlowDowncomer = new javax.swing.JLabel();
-        jLabelReadingTempToDrum = new javax.swing.JLabel();
         jLabelReadingDrumPressure = new javax.swing.JLabel();
         jLabelReadingTrim2 = new javax.swing.JLabel();
         jLabelReadingDrumTemp = new javax.swing.JLabel();
@@ -290,14 +289,6 @@ public class PanelMnemonicLoop extends javax.swing.JPanel implements UpdateRecei
         jLabelReadingFlowDowncomer.setOpaque(true);
         add(jLabelReadingFlowDowncomer, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 278, 56, 16));
 
-        jLabelReadingTempToDrum.setBackground(new java.awt.Color(77, 69, 27));
-        jLabelReadingTempToDrum.setFont(new java.awt.Font("Monospaced", 1, 10)); // NOI18N
-        jLabelReadingTempToDrum.setForeground(new java.awt.Color(231, 255, 166));
-        jLabelReadingTempToDrum.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabelReadingTempToDrum.setText("___ °C");
-        jLabelReadingTempToDrum.setOpaque(true);
-        add(jLabelReadingTempToDrum, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 88, 56, 16));
-
         jLabelReadingDrumPressure.setBackground(new java.awt.Color(77, 69, 27));
         jLabelReadingDrumPressure.setFont(new java.awt.Font("Monospaced", 1, 10)); // NOI18N
         jLabelReadingDrumPressure.setForeground(new java.awt.Color(231, 255, 166));
@@ -443,7 +434,6 @@ public class PanelMnemonicLoop extends javax.swing.JPanel implements UpdateRecei
     private javax.swing.JLabel jLabelReadingFlowDowncomer;
     private javax.swing.JLabel jLabelReadingMcpInPressure;
     private javax.swing.JLabel jLabelReadingMcpInTemp;
-    private javax.swing.JLabel jLabelReadingTempToDrum;
     private javax.swing.JLabel jLabelReadingTrim1;
     private javax.swing.JLabel jLabelReadingTrim2;
     private javax.swing.JLabel jLabelReadingTrim3;
@@ -806,10 +796,6 @@ public class PanelMnemonicLoop extends javax.swing.JPanel implements UpdateRecei
             case "DownFlow" ->
                 jLabelReadingFlowDowncomer.setText(
                         String.format("%.0f", newValue) + " kg/s");
-            case "ReactorOutTemperature" ->
-                jLabelReadingTempToDrum.setText(
-                        String.format("%.1f", newValue)
-                                .replaceAll("(\\.\\d+?)0*$", "$1") + " °C");
             case "McpInTemp" ->
                 jLabelReadingMcpInTemp.setText(
                         String.format("%.1f", newValue)
@@ -818,10 +804,6 @@ public class PanelMnemonicLoop extends javax.swing.JPanel implements UpdateRecei
                 jLabelReadingMcpInPressure.setText(
                         String.format("%.1f", newValue)
                                 .replaceAll("(\\.\\d+?)0*$", "$1") + " bar");
-            case "ReactorOutTemp" ->
-                jLabelReadingTempToDrum.setText(
-                        String.format("%.1f", newValue)
-                                .replaceAll("(\\.\\d+?)0*$", "$1") + " °C");
             case "BlowdownFlowToFeedwaterIn" ->
                 jLabelBlowdownFlow.setText(
                         String.format("%.0f", newValue) + " kg/s");
