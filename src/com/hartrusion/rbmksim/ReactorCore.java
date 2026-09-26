@@ -36,6 +36,7 @@ import com.hartrusion.mvc.ModelListener;
 import com.hartrusion.rbmksim.jev.Az5Decision;
 import com.hartrusion.rbmksim.jev.Az5Guard;
 import com.hartrusion.rbmksim.jev.Az5PlantState;
+import com.hartrusion.rbmksim.jev.Az5PreventionNotice;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.function.DoubleSupplier;
@@ -279,6 +280,14 @@ public class ReactorCore extends Subsystem implements Runnable {
     private boolean excursionLogged;
 
     /**
+     * Plant snapshot and Jev (or stand-in) decision from the divert. Used once
+     * when staged AZ-5 finishes intact, for the control-panel prevent dialog.
+     */
+    private Az5PlantState preventedPlantState;
+    private Az5Decision preventedDecision;
+    private boolean jevPreventDialogSent;
+
+    /**
      * Will be set to current time except if the excursion happens, then its
      * last value will be used for obtaining the time since excursion start.
      */
@@ -453,6 +462,7 @@ public class ReactorCore extends Subsystem implements Runnable {
                             neutronFluxModel.getYNeutronFlux(),
                             neutronFluxModel.isReactorIntact()
                         });
+                notifyJevPreventedIfNeeded();
             }
         }
 
@@ -1580,12 +1590,45 @@ public class ReactorCore extends Subsystem implements Runnable {
                         decision.detail()
                     });
             if (decision.stageInsertion()) {
+                preventedPlantState = plantState;
+                preventedDecision = decision;
                 stagedAz5.begin(controlRods);
                 LOGGER.log(Level.INFO, "AZ-5 diverted to staged insertion.");
+                if (!stagedAz5.isActive()) {
+                    // Nothing left to insert (edge case); still report prevention.
+                    notifyJevPreventedIfNeeded();
+                }
                 return;
             }
         }
         insertEveryRodNow();
+    }
+
+    /**
+     * After a diverted AZ-5 finishes without a prompt excursion, tell the
+     * control panel so it can open the prevent dialog.
+     */
+    private void notifyJevPreventedIfNeeded() {
+        if (jevPreventDialogSent
+                || preventedDecision == null
+                || preventedPlantState == null
+                || !neutronFluxModel.isReactorIntact()) {
+            return;
+        }
+        jevPreventDialogSent = true;
+        Az5PreventionNotice notice = new Az5PreventionNotice(
+                preventedPlantState,
+                preventedDecision,
+                neutronFluxModel.getYNeutronFlux());
+        LOGGER.log(Level.INFO,
+                "Jev-prevented dialog requested. source={0} choice={1} spikeNoul={2} fluxAfter={3}",
+                new Object[] {
+                    preventedDecision.source(),
+                    preventedDecision.choice(),
+                    preventedDecision.spikeNoul(),
+                    notice.fluxPercentAfterScram()
+                });
+        controller.propertyChange("JevPrevented", notice);
     }
 
     /**
