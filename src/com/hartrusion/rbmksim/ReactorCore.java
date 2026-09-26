@@ -33,6 +33,9 @@ import com.hartrusion.modeling.phasedfluid.PhasedClosedSteamedReservoir;
 import com.hartrusion.modeling.phasedfluid.PhasedNode;
 import com.hartrusion.mvc.ActionCommand;
 import com.hartrusion.mvc.ModelListener;
+import com.hartrusion.rbmksim.jev.Az5Decision;
+import com.hartrusion.rbmksim.jev.Az5Guard;
+import com.hartrusion.rbmksim.jev.Az5PlantState;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.function.DoubleSupplier;
@@ -258,6 +261,12 @@ public class ReactorCore extends Subsystem implements Runnable {
     private boolean exploded;
 
     /**
+     * When AZ-5 is diverted, manual rods are inserted in batches that stay
+     * inside the displacer-window limit in {@link DisplacerAccident}.
+     */
+    private final StagedAz5 stagedAz5 = new StagedAz5();
+
+    /**
      * Will be set to current time except if the excursion happens, then its
      * last value will be used for obtaining the time since excursion start.
      */
@@ -420,6 +429,13 @@ public class ReactorCore extends Subsystem implements Runnable {
             f.prepareAffectionCalculation();
         }
 
+        // Staged AZ-5 releases the next manual-rod batch only after the
+        // previous batch has left the displacer window. Targets are applied
+        // before rod.run() integrates position.
+        if (stagedAz5.isActive() && neutronFluxModel.isReactorIntact()) {
+            stagedAz5.advance();
+        }
+
         // Calling run at the end of this loop will make the control rods 
         // controller "grab" the values by the defined lambda expression from
         // the init part.
@@ -499,14 +515,8 @@ public class ReactorCore extends Subsystem implements Runnable {
         // To make sure the AZ-5 works also during half load and during normal
         // shutdown procedure, the effect will further be limited by the neutron
         // flux itself.
-        double fluxMult = 0.0;
-        if (neutronFluxModel.getYNeutronFlux() <= 5.0) {
-            fluxMult = 1.0;
-        } else if (neutronFluxModel.getYNeutronFlux() <= 10.0) {
-            // linear thorugh 5.0|1.0 and 10.0|0.0
-            fluxMult = -0.2 * neutronFluxModel.getYNeutronFlux() + 2;
-        }
-        rodAbsorption -= Math.max(0.0, displacerBoost * fluxMult - 16.0) * 3.5;
+        rodAbsorption -= DisplacerAccident.absorptionRemoved(
+                displacerBoost, neutronFluxModel.getYNeutronFlux());
 
         /* This magic formula sets how the whole thing behaves. The reactivity
         * is given in same unit and dimension as the rods absorption, the 
@@ -1426,8 +1436,10 @@ public class ReactorCore extends Subsystem implements Runnable {
     }
 
     /**
-     * Shutdown makes all rods move into the core immediately with maximum speed
-     * (this is the AZ5 command).
+     * AZ-5. Rods drive in at maximum speed. When the guard is on, a typed
+     * decision can stage the manual rods so they do not all cross the
+     * displacer window together. {@code JEV_GUARD=off} keeps simultaneous
+     * insertion.
      */
     private void shutdown() {
         if (globalControlEnabled) {
@@ -1443,6 +1455,59 @@ public class ReactorCore extends Subsystem implements Runnable {
                     + " (Shutdown)");
         }
         thermalPowerCorrectionEnabled = false;
+        if (Az5Guard.isEnabled()) {
+            Az5PlantState plantState = captureAz5State();
+            Az5Decision decision = Az5Guard.evaluate(plantState);
+            LOGGER.log(Level.INFO,
+                    "AZ-5 guard source={0} choice={1} spikeNoul={2} detail={3}",
+                    new Object[] {
+                        decision.source(),
+                        decision.choice(),
+                        decision.spikeNoul(),
+                        decision.detail()
+                    });
+            if (decision.stageInsertion()) {
+                stagedAz5.begin(controlRods);
+                LOGGER.log(Level.INFO, "AZ-5 diverted to staged insertion.");
+                return;
+            }
+        }
+        insertEveryRodNow();
+    }
+
+    /**
+     * Snapshot used by the AZ-5 guard. Counts come from the rods this core
+     * is already simulating.
+     */
+    private Az5PlantState captureAz5State() {
+        int manualRods = 0;
+        int withdrawn = 0;
+        int inWindow = 0;
+        for (ControlRod rod : controlRods) {
+            if (rod.getRodType() != ChannelType.MANUAL_CONTROLROD) {
+                continue;
+            }
+            manualRods++;
+            double position = rod.getSwi().getOutput();
+            if (position < DisplacerAccident.WINDOW_LOW_M) {
+                withdrawn++;
+            } else if (position <= DisplacerAccident.WINDOW_HIGH_M) {
+                inWindow++;
+            }
+        }
+        return new Az5PlantState(
+                neutronFluxModel.getYNeutronFlux(),
+                withdrawn,
+                inWindow,
+                manualRods,
+                orm);
+    }
+
+    /**
+     * Original AZ-5: every rod drives in at maximum speed together.
+     */
+    private void insertEveryRodNow() {
+        stagedAz5.cancel();
         for (ControlRod c : controlRods) {
             c.setAutomatic(false);
             c.rodSpeedMax();

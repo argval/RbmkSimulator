@@ -55,7 +55,8 @@ public class ControlRod extends ReactorElement implements Runnable {
      * Available manual movement rod speeds which can be selected with the
      * rodSpeedIndex variable.
      */
-    private final double[] rodSpeeds = {0.1, 0.2, 0.3, 0.331};
+    private final double[] rodSpeeds = {
+        0.1, 0.2, 0.3, DisplacerAccident.AZ5_INSERTION_SPEED_M_PER_S};
     private int rodSpeedIndex = 1;
 
     /**
@@ -264,25 +265,10 @@ public class ControlRod extends ReactorElement implements Runnable {
             // go propmt critical when the RPS triggers due to high neutron 
             // rates. The accident trigger will be done elsewhere but the effect
             // will stay here. This makes it generally visible.
-            if (position <= 0.4) { // pos value here
-                // dangerous area: this goes into wrong direction when inserting
-                // until we hit pos meters. interpolate between 0/0.03 and pos/0
-                absorption = 0.03 - position * (0.03 / 0.4);
-            } else if (position >= 7.3) {
-                absorption = 1.0; // full insert
-            } else {
-                // interp 0.4/0 and 7.3/1
-                // y = (y2-y1) / (x2-x1) * (x-x1) + y1);
-                absorption = 1.0 / (7.3 - 0.4) * (position - 0.4);
-            }
-            // Separate function for calculating the wrong orm absorption value
-            if (position <= 0.0) {
-                ormAbsoption = 0.0;
-            } else if (position >= 7.3) {
-                ormAbsoption = 1.0;
-            } else {
-                ormAbsoption = 1.0 / 7.3 * position; // no tip effect here
-            }
+            absorption = DisplacerAccident.manualRodAbsorption(position);
+            // Separate function for calculating the wrong orm absorption value.
+            // The tip effect is left out on purpose.
+            ormAbsoption = DisplacerAccident.manualOrmAbsorption(position);
             
         }
         if (rodType == ChannelType.AUTOMATIC_CONTROLROD) {
@@ -318,18 +304,7 @@ public class ControlRod extends ReactorElement implements Runnable {
             displacerBoost = 0.0;
             return;
         }
-        double position = swi.getOutput();
-        if (position >= 1.25 || position <= 0.75) {
-            displacerBoost = 0.0;
-            return;
-        }
-        if (position == 1.0) {
-            displacerBoost = 1.0;
-        } else if (position > 1.0) {
-            displacerBoost = -4 * position + 5;
-        } else { // if (position < 1.0)
-            displacerBoost = 4 * position - 3;
-        }
+        displacerBoost = DisplacerAccident.manualDisplacerBoost(swi.getOutput());
     }
 
     /**
