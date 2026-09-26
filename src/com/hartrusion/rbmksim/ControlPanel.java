@@ -1892,6 +1892,18 @@ public class ControlPanel extends javax.swing.JFrame implements
     }
 
     /**
+     * Accident-test layout inside this same control panel: rod dials, the
+     * reactor controls (AZ-5 and the neutron-flux readout), the neutron-flux
+     * chart, the alarm list, and the turbine and condensation mnemonics.
+     */
+    public void openAccidentDemo() {
+        jMenuItemPresetReactorOperatorActionPerformed(null);
+        jMenuItemMnemonicTurbineActionPerformed(null);
+        jMenuItemMnemonicCondensationActionPerformed(null);
+        setExtendedState(java.awt.Frame.MAXIMIZED_BOTH);
+    }
+
+    /**
      * Modifies the instance to make it fit to be a client (disables some things
      * that are not available on clients)
      */

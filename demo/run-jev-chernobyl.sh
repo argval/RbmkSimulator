@@ -18,6 +18,7 @@ javac --release 17 -d "$OUT" \
   "$ROOT/src/com/hartrusion/rbmksim/jev/LocalJevStandIn.java" \
   "$ROOT/src/com/hartrusion/rbmksim/jev/JevClient.java" \
   "$ROOT/src/com/hartrusion/rbmksim/jev/Az5Guard.java" \
+  "$ROOT/src/com/hartrusion/rbmksim/AccidentPlant.java" \
   "$ROOT/src/com/hartrusion/rbmksim/ChernobylAccidentDemo.java"
 
 exec java -cp "$OUT" com.hartrusion.rbmksim.ChernobylAccidentDemo "${1:-both}"

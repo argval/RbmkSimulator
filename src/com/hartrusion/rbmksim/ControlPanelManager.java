@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.Timer;
 
 /**
  * The main GUI manager, manages the creation of ControlPanel windows and
@@ -74,10 +75,24 @@ public class ControlPanelManager implements InteractiveView {
             p.setAsClient();
         }
         p.setParent(this);
+        boolean accidentTest = ReactorCore.accidentTestRequested();
+        if (accidentTest) {
+            p.setExtendedState(java.awt.Frame.MAXIMIZED_BOTH);
+        }
         p.setVisible(true); // we are on the EDT already
         if (controlPanels.size() == 0) {
-            // The first frame gets the reactor control panel displayed.
-            p.openReactorControlPanel();
+            if (accidentTest) {
+                // Reactor Controls is safe to open immediately. The neutron-flux
+                // chart needs a snapshot in the plot handler, which arrives
+                // after the first cycles.
+                p.openReactorControlPanel();
+                Timer layout = new Timer(1500, ev -> p.openAccidentDemo());
+                layout.setRepeats(false);
+                layout.start();
+            } else {
+                // The first frame gets the reactor control panel displayed.
+                p.openReactorControlPanel();
+            }
         }
         controlPanels.add(p);
     }

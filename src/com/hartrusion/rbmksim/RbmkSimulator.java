@@ -27,6 +27,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.UIManager;
 import javax.swing.plaf.metal.MetalLookAndFeel;
+import com.hartrusion.mvc.ActionCommand;
 import com.hartrusion.mvc.AwtUpdater;
 import com.hartrusion.mvc.Controller;
 import com.hartrusion.rbmksim.gui.elements.ChornobylMetalTheme;
@@ -116,6 +117,15 @@ public class RbmkSimulator {
         
         // Start the 100 ms cyclic thread
         scheduler.scheduleAtFixedRate(mainLoop, 100, 100, TimeUnit.MILLISECONDS);
+
+        // Verification only. The stage path is the AZ-5 button on Reactor Controls.
+        String autoAz5 = System.getenv("RBMK_AUTO_AZ5_MS");
+        if (autoAz5 != null && !autoAz5.isBlank()) {
+            long delayMs = Long.parseLong(autoAz5.trim());
+            scheduler.schedule(() -> java.awt.EventQueue.invokeLater(() ->
+                    mainLoop.handleAction(new ActionCommand("Reactor#AZ5", true))),
+                    delayMs, TimeUnit.MILLISECONDS);
+        }
     }
 
     /**
