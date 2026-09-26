@@ -87,7 +87,7 @@ What to point at:
 
 - Before the click, the green neutron-flux readout on Reactor Controls sits near `004.00`. Most rod-position dials are withdrawn.
 - Incident: the flux readout and the Neutron Flux chart climb through 100 toward hundreds, the rod dials drive in together, and a non-modal dialog titled **What just happened?** appears. That dialog is the explosion.
-- Jev: the same readout falls toward zero, the rod dials move in batches instead of all at once, the alarm list does not end in the explosion, and the dialog does not appear. The console line `Staged AZ-5 finished` reports the flux still intact.
+- Jev: the same readout falls toward zero, the rod dials move in batches instead of all at once, and when the staged scram finishes intact a non-modal dialog titled **Jev prevented the incident** opens. It names the low flux, the many rods that would have entered the displacer window together, the modeled spike, and the prevention details (`stage_insertion`, spike noul, source/model). The claim stays narrow: this is the simulator's displacer sequence. The console line `Staged AZ-5 finished` reports the flux still intact, and `Showing Jev-prevented dialog` confirms the UI path.
 
 The headless script `demo/run-jev-chernobyl.sh` is the transcript of the same model. It is not the window to put on the projector.
 

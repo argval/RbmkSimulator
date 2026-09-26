@@ -41,6 +41,9 @@ import com.hartrusion.rbmksim.gui.widgets.*;
 import com.hartrusion.rbmksim.gui.mnemonic.*;
 import com.hartrusion.rbmksim.gui.panels.PanelEccs;
 import com.hartrusion.rbmksim.gui.panels.PanelPressureSetpoint;
+import com.hartrusion.rbmksim.jev.Az5Decision;
+import com.hartrusion.rbmksim.jev.Az5PlantState;
+import com.hartrusion.rbmksim.jev.Az5PreventionNotice;
 import com.hartrusion.util.JDesktopPaneEnhanced;
 import com.hartrusion.values.ValueHandler;
 import java.beans.PropertyChangeEvent;
@@ -1989,6 +1992,95 @@ public class ControlPanel extends javax.swing.JFrame implements
             dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
             dialog.setVisible(true);
         }
+
+        if (propertyName.equals("JevPrevented")
+                && newValue instanceof Az5PreventionNotice notice) {
+            showJevPreventedDialog(notice);
+        }
+    }
+
+    /**
+     * Non-modal dialog after a staged AZ-5 finishes without the modeled
+     * excursion. Honest about what this simulator implements.
+     */
+    private void showJevPreventedDialog(Az5PreventionNotice notice) {
+        java.util.logging.Logger.getLogger(ControlPanel.class.getName())
+                .log(java.util.logging.Level.INFO,
+                        "Showing Jev-prevented dialog. source={0} model={1} choice={2}",
+                        new Object[] {
+                            notice.decision().source(),
+                            notice.decision().model(),
+                            notice.decision().choice()
+                        });
+        JOptionPane pane = new JOptionPane(
+                formatJevPreventedMessage(notice),
+                JOptionPane.INFORMATION_MESSAGE);
+        JDialog dialog = pane.createDialog(this, "Jev prevented the incident");
+        dialog.setModal(false);
+        dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        dialog.setVisible(true);
+    }
+
+    /**
+     * Dialog body for the prevent path. Package-visible for a small
+     * compile-time check without Swing.
+     */
+    static String formatJevPreventedMessage(Az5PreventionNotice notice) {
+        Az5PlantState state = notice.plantStateAtDecision();
+        Az5Decision decision = notice.decision();
+        String who;
+        if (Az5Decision.SOURCE_JEV.equals(decision.source())) {
+            who = "Live Jev answered the AZ-5 questions.";
+        } else {
+            who = "The local stand-in answered (not live Jev).";
+        }
+        return "Jev prevented the incident.\n"
+                + "\n"
+                + "What was about to happen (this simulator's displacer sequence,\n"
+                + "not a claim about 1986 neutron physics):\n"
+                + "- Neutron flux was low ("
+                + String.format(java.util.Locale.US, "%.2f", state.neutronFluxPercent())
+                + "% of nominal).\n"
+                + "- "
+                + state.manualRodsWithdrawn()
+                + " of "
+                + state.manualRodsTotal()
+                + " manual rods were withdrawn and would have entered the\n"
+                + "  "
+                + DisplacerAccident.WINDOW_LOW_M
+                + "–"
+                + DisplacerAccident.WINDOW_HIGH_M
+                + " m displacer window together under simultaneous AZ-5.\n"
+                + "- In this model that would start the displacer boost and the\n"
+                + "  modeled prompt excursion (absorption subtraction above the\n"
+                + "  hidden threshold of "
+                + DisplacerAccident.SIMULTANEOUS_LIMIT
+                + ").\n"
+                + "\n"
+                + "How it was prevented:\n"
+                + "- "
+                + who
+                + "\n"
+                + "- Source: "
+                + decision.source()
+                + "\n"
+                + "- Model: "
+                + decision.model()
+                + "\n"
+                + "- Choice: "
+                + decision.choice()
+                + "\n"
+                + "- Spike noul: "
+                + String.format(java.util.Locale.US, "%.3f", decision.spikeNoul())
+                + "\n"
+                + "- Staged insertion kept at most "
+                + DisplacerAccident.SIMULTANEOUS_LIMIT
+                + " manual rods in the window at once.\n"
+                + "- After the staged scram, flux was "
+                + String.format(java.util.Locale.US, "%.2f", notice.fluxPercentAfterScram())
+                + "% and the reactor stayed intact.\n"
+                + "\n"
+                + decision.detail();
     }
 
     @Override
