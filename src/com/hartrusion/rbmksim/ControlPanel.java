@@ -42,6 +42,7 @@ import com.hartrusion.rbmksim.gui.mnemonic.*;
 import com.hartrusion.rbmksim.gui.panels.PanelEccs;
 import com.hartrusion.rbmksim.gui.panels.PanelPressureSetpoint;
 import com.hartrusion.rbmksim.jev.Az5Decision;
+import com.hartrusion.rbmksim.jev.Az5Guard;
 import com.hartrusion.rbmksim.jev.Az5PlantState;
 import com.hartrusion.rbmksim.jev.Az5PreventionNotice;
 import com.hartrusion.util.JDesktopPaneEnhanced;
@@ -121,6 +122,9 @@ public class ControlPanel extends javax.swing.JFrame implements
     private InternalFrameCoreActivity coreActivity1;
     private InternalFrameCoreActivity coreActivity2;
 
+    /** Live Jev input/decision readout; opened for the guarded AZ-5 demo. */
+    private InternalFrameJevValues jevValues;
+
     private FrameDebugFuelTemperature frameDebugTemperature;
     private FrameDebugFissionPower frameDebugPower;
     private FrameDebugVoiding frameDebugVoiding;
@@ -164,6 +168,7 @@ public class ControlPanel extends javax.swing.JFrame implements
         jMenuItemViewAlarmList = new javax.swing.JMenuItem();
         jMenuItemViewCore1 = new javax.swing.JMenuItem();
         jMenuItemViewCore2 = new javax.swing.JMenuItem();
+        jMenuItemViewJevValues = new javax.swing.JMenuItem();
         jSeparator7 = new javax.swing.JPopupMenu.Separator();
         jMenuItemViewECCS = new javax.swing.JMenuItem();
         jMenuControls = new javax.swing.JMenu();
@@ -301,6 +306,10 @@ public class ControlPanel extends javax.swing.JFrame implements
         jMenuItemViewCore2.setText("Core Activity 2");
         jMenuItemViewCore2.addActionListener(this::jMenuItemViewCore2ActionPerformed);
         jMenuView.add(jMenuItemViewCore2);
+
+        jMenuItemViewJevValues.setText("Jev AZ-5 Guard");
+        jMenuItemViewJevValues.addActionListener(this::jMenuItemViewJevValuesActionPerformed);
+        jMenuView.add(jMenuItemViewJevValues);
         jMenuView.add(jSeparator7);
 
         jMenuItemViewECCS.setText("Emergency Core Cooling System");
@@ -1193,6 +1202,35 @@ public class ControlPanel extends javax.swing.JFrame implements
         }
     }//GEN-LAST:event_jMenuItemViewCore2ActionPerformed
 
+    private void jMenuItemViewJevValuesActionPerformed(java.awt.event.ActionEvent evt) {
+        openJevValuesFrame();
+    }
+
+    /**
+     * Opens the Jev AZ-5 Guard internal frame if it is not already open.
+     * Used by the View menu and by the guarded accident-demo layout.
+     */
+    private void openJevValuesFrame() {
+        if (jevValues == null) {
+            jevValues = new InternalFrameJevValues();
+            jevValues.setVisible(true);
+            jevValues.addInternalFrameListener(new InternalFrameAdapter() {
+                @Override
+                public void internalFrameClosed(InternalFrameEvent e) {
+                    jevValues = null;
+                }
+            });
+            jDesktopPane1.add(jevValues);
+            controller.fireLastPropertyChangesTo(jevValues);
+        }
+        try {
+            jevValues.setSelected(true);
+        } catch (PropertyVetoException ex) {
+            // ignore
+        }
+        jevValues.toFront();
+    }
+
     private void jMenuItemPresetReactorOperatorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemPresetReactorOperatorActionPerformed
         jMenuItemPresetNoneActionPerformed(null); // close all
 
@@ -1854,6 +1892,7 @@ public class ControlPanel extends javax.swing.JFrame implements
     private javax.swing.JMenuItem jMenuItemViewCore1;
     private javax.swing.JMenuItem jMenuItemViewCore2;
     private javax.swing.JMenuItem jMenuItemViewECCS;
+    private javax.swing.JMenuItem jMenuItemViewJevValues;
     private javax.swing.JMenuItem jMenuItemViewRodPositions;
     private javax.swing.JMenuItem jMenuLoad;
     private javax.swing.JMenu jMenuMnemonics;
@@ -1898,11 +1937,20 @@ public class ControlPanel extends javax.swing.JFrame implements
      * Accident-test layout inside this same control panel: rod dials, the
      * reactor controls (AZ-5 and the neutron-flux readout), the neutron-flux
      * chart, the alarm list, and the turbine and condensation mnemonics.
+     * When the AZ-5 guard is on, also opens the Jev values frame next to the
+     * Neutron Flux chart.
      */
     public void openAccidentDemo() {
         jMenuItemPresetReactorOperatorActionPerformed(null);
         jMenuItemMnemonicTurbineActionPerformed(null);
         jMenuItemMnemonicCondensationActionPerformed(null);
+        if (Az5Guard.isEnabled()) {
+            openJevValuesFrame();
+            JDesktopPaneEnhanced.windowSetSize(jevValues, 340, 420);
+            JDesktopPaneEnhanced.windowPlaceRightTo(
+                    jevValues,
+                    getDiagramInstance("Neutron Flux"));
+        }
         setExtendedState(java.awt.Frame.MAXIMIZED_BOTH);
     }
 
@@ -1934,6 +1982,9 @@ public class ControlPanel extends javax.swing.JFrame implements
         }
         if (rodPositions != null) {
             rodPositions.updateComponent(evt);
+        }
+        if (jevValues != null) {
+            jevValues.updateComponent(evt);
         }
     }
 
@@ -1996,6 +2047,10 @@ public class ControlPanel extends javax.swing.JFrame implements
         if (propertyName.equals("JevPrevented")
                 && newValue instanceof Az5PreventionNotice notice) {
             showJevPreventedDialog(notice);
+        }
+
+        if (jevValues != null) {
+            jevValues.updateComponent(propertyName, newValue);
         }
     }
 
