@@ -267,6 +267,18 @@ public class ReactorCore extends Subsystem implements Runnable {
     private final StagedAz5 stagedAz5 = new StagedAz5();
 
     /**
+     * Holds the accident-test layout from the reactivity comment: reactivity
+     * stays at 28 and the withdrawn manual rods stay put until AZ-5.
+     */
+    private boolean accidentTest;
+
+    /** One AZ-5 decision. A later RPS trip must not call Jev again. */
+    private boolean az5Accepted;
+
+    /** One log line when the neutron model leaves the intact band. */
+    private boolean excursionLogged;
+
+    /**
      * Will be set to current time except if the excursion happens, then its
      * last value will be used for obtaining the time since excursion start.
      */
@@ -434,6 +446,14 @@ public class ReactorCore extends Subsystem implements Runnable {
         // before rod.run() integrates position.
         if (stagedAz5.isActive() && neutronFluxModel.isReactorIntact()) {
             stagedAz5.advance();
+            if (!stagedAz5.isActive()) {
+                LOGGER.log(Level.INFO,
+                        "Staged AZ-5 finished. flux={0} intact={1}",
+                        new Object[] {
+                            neutronFluxModel.getYNeutronFlux(),
+                            neutronFluxModel.isReactorIntact()
+                        });
+            }
         }
 
         // Calling run at the end of this loop will make the control rods 
@@ -538,7 +558,15 @@ public class ReactorCore extends Subsystem implements Runnable {
         *   issues. 5 * 2.2 % = 11 % roughly by auto rods, lets assume to have
         *   15 % voiding meaning 11 %N so its *0.73
          */
-        if (!useLoadedValues) {
+        // For testing the accident conditions and trigger, set reactivity to
+        // 28 instead of 81.73 and remove 25 manual rods (but NOT at the same
+        // time!). use auto rods for getting k=1 and press AZ5.
+        // RBMK_ACCIDENT_TEST=1 arms that layout in init and holds reactivity
+        // at 28 for the whole run, so xenon and voiding cannot walk the core
+        // off the test before AZ-5.
+        if (accidentTest) {
+            reactivity = AccidentPlant.REACTIVITY;
+        } else if (!useLoadedValues) {
             reactivity = REACTIVITY_BASE // generally present reactivity.
                     - xenonModel.getYXenonContribution() * REACTIVITY_XENON
                     - graphiteModel.getYGraphie() * REACTIVITY_GRAPHITE
@@ -546,11 +574,8 @@ public class ReactorCore extends Subsystem implements Runnable {
                     + voidingReactivity * REACTIVITY_VOIDING;
         }
 
-        // For testing the accident conditions and trigger, set reactivity to
-        // 28 instead of 81.73 and remove 25 manual rods (but NOT at the same
-        // time!). use auto rods for getting k=1 and press AZ5
         // pass reactivity to and get the neutron flux from state space model.
-        if (!useLoadedValues) {
+        if (accidentTest || !useLoadedValues) {
             neutronFluxModel.setInputs(rodAbsorption, reactivity);
         }
         neutronFluxModel.run();
@@ -614,6 +639,12 @@ public class ReactorCore extends Subsystem implements Runnable {
         // neutron excursion.
         Instant now = Instant.now(); // get current time
         if (!neutronFluxModel.isReactorIntact() && !exploded) {
+            if (accidentTest && !excursionLogged) {
+                excursionLogged = true;
+                LOGGER.log(Level.INFO,
+                        "Prompt excursion latched. flux={0}",
+                        neutronFluxModel.getYNeutronFlux());
+            }
             if (Duration.between(excursionStartTime, now).toMillis() >= 2500) {
                 reactorExplosion();
                 exploded = true;
@@ -1369,6 +1400,84 @@ public class ReactorCore extends Subsystem implements Runnable {
         });
         am.registerAlarmManager(alarmManager);
         alarmUpdater.submit(am);
+
+        if (accidentTestRequested()) {
+            armAccidentTest();
+        }
+    }
+
+    /**
+     * {@code RBMK_ACCIDENT_TEST=1} (also {@code true} or {@code on}) starts
+     * the control panel in the accident-test layout.
+     */
+    static boolean accidentTestRequested() {
+        String value = System.getenv("RBMK_ACCIDENT_TEST");
+        if (value == null) {
+            return false;
+        }
+        return value.equals("1")
+                || value.equalsIgnoreCase("true")
+                || value.equalsIgnoreCase("on");
+    }
+
+    /**
+     * Places 25 manual rods fully withdrawn, leaves the rest inserted, and
+     * trims the automatic rods so absorption matches reactivity 28. Rods are
+     * held until AZ-5. This is the layout named in the reactivity comment.
+     */
+    private void armAccidentTest() {
+        int withdrawn = 0;
+        int automaticRods = 0;
+        double fixedAbsorption = 0.0;
+        for (ControlRod rod : controlRods) {
+            ChannelType type = rod.getRodType();
+            if (type == ChannelType.MANUAL_CONTROLROD) {
+                double position = withdrawn < 25 ? 0.0 : AccidentPlant.INSERTED_M;
+                if (withdrawn < 25) {
+                    withdrawn++;
+                }
+                holdRod(rod, position);
+                fixedAbsorption += DisplacerAccident.manualRodAbsorption(position);
+            } else if (type == ChannelType.SHORT_CONTROLROD) {
+                holdRod(rod, 2.5);
+                fixedAbsorption += rod.getMaxAbsorption();
+            } else if (type == ChannelType.AUTOMATIC_CONTROLROD) {
+                automaticRods++;
+            }
+        }
+        double targetSum = AccidentPlant.REACTIVITY / 100.0 * maxAbsorption;
+        double autoEach = automaticRods == 0
+                ? -1.0
+                : (targetSum - fixedAbsorption) / automaticRods;
+        if (withdrawn != 25 || autoEach <= 0.0 || autoEach >= 1.0) {
+            LOGGER.log(Level.WARNING,
+                    "Accident test not armed. withdrawn={0} autoEach={1}",
+                    new Object[] {withdrawn, autoEach});
+            return;
+        }
+        double autoPosition = autoEach * 7.3;
+        for (ControlRod rod : controlRods) {
+            if (rod.getRodType() == ChannelType.AUTOMATIC_CONTROLROD) {
+                holdRod(rod, autoPosition);
+            }
+        }
+        double absorptionPercent = targetSum / maxAbsorption * 100.0;
+        neutronFluxModel.setInitialConditions(
+                absorptionPercent,
+                AccidentPlant.REACTIVITY,
+                AccidentPlant.INITIAL_FLUX_PERCENT);
+        accidentTest = true;
+        // Leave the protection system in manual so a neutron-rate trip cannot
+        // press AZ-5 before the operator does.
+        rps = ControlCommand.MANUAL_OPERATION;
+        LOGGER.log(Level.INFO,
+                "Accident test armed. Reactivity held at {0}, {1} manual rods withdrawn, auto rods at {2} m. RPS is manual. Press AZ-5 on Reactor Controls.",
+                new Object[] {AccidentPlant.REACTIVITY, withdrawn, autoPosition});
+    }
+
+    private static void holdRod(ControlRod rod, double positionMeters) {
+        rod.setAutomatic(false);
+        rod.getSwi().forceOutputValue(positionMeters);
     }
 
     /**
@@ -1442,6 +1551,10 @@ public class ReactorCore extends Subsystem implements Runnable {
      * insertion.
      */
     private void shutdown() {
+        if (az5Accepted || stagedAz5.isActive()) {
+            return;
+        }
+        az5Accepted = true;
         if (globalControlEnabled) {
             LOGGER.log(Level.INFO, "Deactivated Global Control (Shutdown)");
         }

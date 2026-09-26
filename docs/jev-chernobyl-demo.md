@@ -68,7 +68,28 @@ demo/run-jev-chernobyl.sh both
 
 `both` is the default. The script compiles only the neutron model, the displacer arithmetic, the Jev client, and the scenario. It does not build the Swing panels or the thermal network.
 
-Suggested order on stage: unguarded first, then guarded. Leave the unguarded transcript on screen long enough for the room to see `excursion=YES` after the rods have left the window.
+## Control panel
+
+The stage demo is the existing window titled **RBMK Simulator - Control Panel**. Run one scenario, close that window, then run the other. Do not use Help → Secret → Trigger Disaster. That menu forces the excursion flag and skips the displacer sequence.
+
+`demo/run-control-panel.sh` compiles this checkout against `lib/RbmkSimulator-0.4.6.jar` (the release fat jar, which already contains PhxNetMod, utils, jmplot, and AbsoluteLayout) and starts `com.hartrusion.rbmksim.RbmkSimulator`. It sources the gitignored `.env` when that file exists and does not print the key. `RBMK_ACCIDENT_TEST=1` arms the layout above and opens rod dials, Reactor Controls, the neutron-flux chart, the alarm list, and the turbine and condensation mnemonics.
+
+```bash
+demo/run-control-panel.sh incident
+demo/run-control-panel.sh jev
+```
+
+`incident` sets `JEV_GUARD=off`, so AZ-5 inserts every rod together. `jev` sets `JEV_MODE=auto`. When `TYPESAFE_API_KEY` is set, that press calls Jev. The log line is `AZ-5 guard source=jev`. If the key is absent or the call fails, the same line says the local stand-in answered.
+
+On Reactor Controls, the AZ-5 control is the small round button labeled **AZ-5** (tooltip: scrams the reactor). One click is the whole scenario.
+
+What to point at:
+
+- Before the click, the green neutron-flux readout on Reactor Controls sits near `004.00`. Most rod-position dials are withdrawn.
+- Incident: the flux readout and the Neutron Flux chart climb through 100 toward hundreds, the rod dials drive in together, and a non-modal dialog titled **What just happened?** appears. That dialog is the explosion.
+- Jev: the same readout falls toward zero, the rod dials move in batches instead of all at once, the alarm list does not end in the explosion, and the dialog does not appear. The console line `Staged AZ-5 finished` reports the flux still intact.
+
+The headless script `demo/run-jev-chernobyl.sh` is the transcript of the same model. It is not the window to put on the projector.
 
 ## What was integrated
 
@@ -92,7 +113,7 @@ The intervention point is AZ-5, `ReactorCore.shutdown()`. That is also the path 
 
 5. Staging uses the existing rod drives. Automatic rods, which do not contribute displacer boost, still go in immediately. Manual rods go in groups of at most 16 until each group has passed 1.25 m. The neutron equations are untouched.
 
-On the full Swing simulator the same guard is on by default. `JEV_GUARD=off` restores simultaneous AZ-5. Building that UI still needs the sibling projects named in `CONTRIBUTING.md` (PhxNetMod, utils, jmplot, AbsoluteLayout). This demo does not.
+On the control panel the same guard is on by default. `JEV_GUARD=off` restores simultaneous AZ-5. `demo/run-control-panel.sh incident` is that path. `demo/run-control-panel.sh jev` leaves the guard on.
 
 ## The stand-in, and what a real key replaces
 
