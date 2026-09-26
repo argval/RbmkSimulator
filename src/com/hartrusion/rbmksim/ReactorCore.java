@@ -774,6 +774,11 @@ public class ReactorCore extends Subsystem implements Runnable {
                 voidingReactivity);
         outputValues.setParameterValue("Reactor#RodAbsorption",
                 rodAbsorption);
+
+        // Live plant snapshot for the Jev AZ-5 Guard internal frame.
+        if (controller != null) {
+            controller.propertyChange("Az5PlantState", captureAz5State());
+        }
     }
 
     /**
@@ -1589,6 +1594,8 @@ public class ReactorCore extends Subsystem implements Runnable {
                         decision.spikeNoul(),
                         decision.detail()
                     });
+            // Show the answer on the Jev values frame before rods move.
+            controller.propertyChange("Az5Decision", decision);
             if (decision.stageInsertion()) {
                 preventedPlantState = plantState;
                 preventedDecision = decision;

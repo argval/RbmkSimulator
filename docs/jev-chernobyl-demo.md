@@ -81,6 +81,8 @@ demo/run-control-panel.sh jev
 
 `incident` sets `JEV_GUARD=off`, so AZ-5 inserts every rod together. `jev` sets `JEV_MODE=auto`. When `TYPESAFE_API_KEY` is set, that press calls Jev. The log line is `AZ-5 guard source=jev`. If the key is absent or the call fails, the same line says the local stand-in answered.
 
+On the `jev` run, the Control Panel also opens an internal frame titled **Jev AZ-5 Guard** (next to the Neutron Flux chart; also under View → Jev AZ-5 Guard). It shows the live plant inputs packed for Jev (flux %, flux multiplier, rods not yet clear of 1.25 m, rods in the 0.75–1.25 m window, withdrawn count, total, ORM) and, after AZ-5, the guard answer (source, model, `az5_would_spike` noul, `scram_action` choice/confidence, whether insertion was staged). The `incident` run leaves that frame closed (`JEV_GUARD=off`).
+
 On Reactor Controls, the AZ-5 control is the small round button labeled **AZ-5** (tooltip: scrams the reactor). One click is the whole scenario.
 
 What to point at:
